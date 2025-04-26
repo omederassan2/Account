@@ -53,8 +53,40 @@
       font-size: 14px;
       color: #aaa;
     }
+    .comparison-container {
+      margin-top: 30px;
+      text-align: right;
+    }
+    .comparison-bar-container {
+      display: block;
+    }
+    .comparison-bar {
+      height: 20px;
+      width: 100%;
+      background-color: #f1f7ff;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    .current-bar {
+      height: 100%;
+      background-color: #00c6ff;
+      border-radius: 8px 0 0 8px;
+    }
+    .previous-bar {
+      height: 100%;
+      background-color: #ff6f61;
+      border-radius: 8px 0 0 8px;
+    }
+    .comparison-text {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      font-size: 16px;
+      font-weight: bold;
+    }
 
-    /* تحجيم النصوص لتناسب الأجهزة الصغيرة */
     @media (max-width: 600px) {
       h1 {
         font-size: 22px;
@@ -67,6 +99,9 @@
       }
       .footer {
         font-size: 12px;
+      }
+      .comparison-text {
+        font-size: 14px;
       }
     }
   </style>
@@ -90,21 +125,69 @@
       <div class="value" id="salary">چاوەڕێ بکە ...</div>
     </div>
 
+    <!-- شريط المقارنة -->
+    <div class="comparison-container">
+      <div class="label"> فرۆشی ئێستا و مانگی پێشوو    :</div>
+
+      <div class="comparison-text">
+        <span>فرۆشتن ئێستا: <span id="current-sales-text">0</span>$</span>
+      </div>
+      <div class="comparison-bar-container">
+        <div class="comparison-bar">
+          <div class="current-bar" id="current-sales-bar"></div>
+        </div>
+      </div>
+
+      <div class="comparison-text">
+        <span>فرۆشتن مانگی پێشوو : <span id="previous-sales-text">0</span>$</span>
+      </div>
+      <div class="comparison-bar-container">
+        <div class="comparison-bar">
+          <div class="previous-bar" id="previous-sales-bar"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="footer">
       کۆمپانیاى ئومێدى ڕاسان  
     </div>
   </div>
 
   <script>
-    // اكتب رابط Web App الخاص بك هنا
-    const url = "https://script.google.com/macros/s/AKfycbxykQOsk_nAVTRMYjnNTOKUDMZUvkZz2l9nD72pzfh5ysnYTQduU6MFqLTGk01fV_z4bw/exec";
+    const url = "https://script.google.com/macros/s/AKfycbwIa9bEFaRfsf6qQ1woC0TI6KehvE8jGfDqTSa1gBleSg1iZwkOfuZEs_ZMBhOcyQjt7Q/exec";
+
+    function formatCurrency(value, includeCents = true) {
+      let formattedValue = parseFloat(value).toFixed(includeCents ? 2 : 0);
+      formattedValue = formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return formattedValue + '$';
+    }
+
+    function updateComparisonBar(currentSales, previousSales) {
+      const currentSalesBar = document.getElementById("current-sales-bar");
+      const previousSalesBar = document.getElementById("previous-sales-bar");
+
+      const maxSales = Math.max(currentSales, previousSales) || 1; // عشان ما يصير تقسيم على صفر
+      const currentPercentage = (currentSales / maxSales) * 100;
+      const previousPercentage = (previousSales / maxSales) * 100;
+
+      currentSalesBar.style.width = currentPercentage + "%";
+      previousSalesBar.style.width = previousPercentage + "%";
+
+      document.getElementById("current-sales-text").innerText = formatCurrency(currentSales, false);
+      document.getElementById("previous-sales-text").innerText = formatCurrency(previousSales, false);
+    }
 
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        document.getElementById("sales").innerText = data.sales;
-        document.getElementById("percentage").innerText = data.percentage;
-        document.getElementById("salary").innerText = data.salary;
+        document.getElementById("sales").innerText = formatCurrency(data.sales, false);
+        document.getElementById("percentage").innerText = formatCurrency(data.percentage);
+        document.getElementById("salary").innerText = formatCurrency(data.salary);
+
+        const currentSales = parseFloat(data.sales);
+        const previousSales = data.previous_sales ? parseFloat(data.previous_sales) : 0;
+
+        updateComparisonBar(currentSales, previousSales);
       })
       .catch(error => {
         document.body.innerHTML = "<h2 style='color:white;'>⚠️ حدث خطأ أثناء جلب البيانات</h2><p style='color:white;'>" + error + "</p>";
