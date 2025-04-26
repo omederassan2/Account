@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>محمد حسابات</title>
+  <style>
+    body {
+      font-family: 'Cairo', Arial, sans-serif;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+    .container {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    h1 {
+      color: #0072ff;
+      margin-bottom: 30px;
+      font-size: 26px;
+      border-bottom: 2px solid #00c6ff;
+      padding-bottom: 10px;
+    }
+    .item {
+      margin-bottom: 25px;
+      text-align: right;
+    }
+    .label {
+      font-size: 18px;
+      color: #333;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .value {
+      font-size: 20px;
+      color: #0072ff;
+      background-color: #f1f7ff;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #cce0ff;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    /* تحجيم النصوص لتناسب الأجهزة الصغيرة */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 22px;
+      }
+      .label {
+        font-size: 16px;
+      }
+      .value {
+        font-size: 18px;
+      }
+      .footer {
+        font-size: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>محمد حسابات</h1>
+
+    <div class="item">
+      <div class="label">فرۆشتن:</div>
+      <div class="value" id="sales"> چاوەڕێ بکە...</div>
+    </div>
+
+    <div class="item">
+      <div class="label">نسبة:</div>
+      <div class="value" id="percentage"> چاوەڕێ بکە...</div>
+    </div>
+
+    <div class="item">
+      <div class="label">مووچە:</div>
+      <div class="value" id="salary">چاوەڕێ بکە ...</div>
+    </div>
+
+    <div class="footer">
+      کۆمپانیاى ئومێدى ڕاسان  
+    </div>
+  </div>
+
+  <script>
+    // اكتب رابط Web App الخاص بك هنا
+    const url = "https://script.google.com/macros/s/AKfycbxykQOsk_nAVTRMYjnNTOKUDMZUvkZz2l9nD72pzfh5ysnYTQduU6MFqLTGk01fV_z4bw/exec";
+
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("sales").innerText = data.sales;
+        document.getElementById("percentage").innerText = data.percentage;
+        document.getElementById("salary").innerText = data.salary;
+      })
+      .catch(error => {
+        document.body.innerHTML = "<h2 style='color:white;'>⚠️ حدث خطأ أثناء جلب البيانات</h2><p style='color:white;'>" + error + "</p>";
+      });
+  </script>
+</body>
+</html>
